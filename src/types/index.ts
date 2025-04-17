@@ -1,40 +1,42 @@
+import { IEvents } from "../components/base/events";
+
 export interface IProduct {
     id: string;
     description: string;
     image: string;
     title: string;
     category: string;
-    price: number;
-}
+    price: number | null;
+};
 
 export interface IOrder {
-    payType: string;
+    payment: string;
+    email: string;
+    phone: string;
     address: string;
-    mail: string;
-    tel: string;
-}
+    total: number;
+    items: string[];
+};
 
 export interface ICatalogModel {
     items: IProduct[];
     preview: string | null;
     setItems(items: IProduct[]): void;
     getProduct(id: string): IProduct;
-}
+};
 
 export interface IBasketModel {
     items: TProductInfo[];
+    events: IEvents;
     add(id: string): void;
     remove(id: string): void;
-    reset(): void;
+    confirm(): IOrder;
+    reset(order: TOrderResponse): void; 
     checkPayValidation(data: Record<keyof IOrder, string>): boolean;
-}
-
-export interface IModal {
-    templateId: string;
-}
-
-export interface IEventEmitter {
-    emit: (event: string, data: unknown) => void;
-}
+};
 
 export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'>;
+
+export type TOrderResponse = Pick<IOrder, 'total'> & {
+    id: string;
+};
