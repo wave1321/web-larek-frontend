@@ -32,10 +32,25 @@ export interface IBasketModel {
     remove(id: string): void;
     confirm(): IOrder;
     reset(order: TOrderResponse): void; 
-    checkPayValidation(data: Record<keyof IOrder, string>): boolean;
+};
+
+export interface IOrderModel {
+    orderInfo: TOrderInfo;
+    orderStage: number;
+    events: IEvents;
+    set primary(data: TOrderPrimaryInfo);
+    set secondary(data: TOrderSecondaryInfo);
+    get info(): TOrderInfo;
+    checkPayValidation(data: Record<keyof TOrderInfo, string>): boolean;
 };
 
 export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'>;
+
+export type TOrderPrimaryInfo  = Pick<IOrder, 'payment' | 'address'>;
+
+export type TOrderSecondaryInfo  = Pick<IOrder, 'email' | 'phone'>; 
+
+export type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
 
 export type TOrderResponse = Pick<IOrder, 'total'> & {
     id: string;

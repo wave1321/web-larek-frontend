@@ -106,7 +106,6 @@ interface IBasketModel {
     add(id: string): void;
     remove(id: string): void;
     reset(): void;
-    checkPayValidation(data: Record<keyof IOrder, string>): boolean;
 };
 ```
 
@@ -116,6 +115,38 @@ interface IBasketModel {
 type TOrderResponse = Pick<IOrder, 'total'> & {
     id: string;
 };
+```
+
+Интерфейс для хранения информации о заказе
+
+```
+export interface IOrderModel {
+    orderInfo: TOrderInfo;
+    orderStage: number;
+    events: IEvents;
+    set primary(data: TOrderPrimaryInfo);
+    set secondary(data: TOrderSecondaryInfo);
+    get info(): TOrderInfo;
+    checkPayValidation(data: Record<keyof TOrderInfo, string>): boolean;
+};
+```
+
+Тип первичных данных объекта ифнормации заказа
+
+```
+type TOrderPrimaryInfo  = Pick<IOrder, 'payment' | 'address'>;
+```
+
+Тип вторичных данных объекта ифнормации заказа
+
+```
+type TOrderSecondaryInfo  = Pick<IOrder, 'email' | 'phone'>; 
+```
+
+Тип полного объекта информации заказа
+
+```
+type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
 ```
 
 
@@ -157,20 +188,31 @@ type TOrderResponse = Pick<IOrder, 'total'> & {
 - `items: IProduct[]` - массив объектов карточек
 - `preview: string | null` - id карточки, выбранной для просмотра в модальной окне.
 Так же класс предоставляет набор методов для взаимодействия с этими данными.
-- `setItems(items: IProduct[]): void` - получает весь имеемый на севреер массив карточек
+- `setItems(items: IProduct[]): void` - получает весь имеемый на севрере массив карточек
 - `getProduct(id: string): IProduct` - возвращает карточку продукта по ее id.
 
 #### Класс BasketModel
-Класс отвечает за хранение и логику работы с данными текущего заказа в корзине.\
+Класс отвечает за хранение товаров в корзине.\
 Конструктор класса принимает инстант брокера событий\
 В полях класса хранятся следующие данные:
 - `items: TProductInfo[]` - массив выбранных для покупки товаров
-- `events: IEvents` - инстант класса `EventEmitter` для инициации события при изменения корзины.
+- `events: IEvents` - инстант класса `EventEmitter` для инициации события при изменении корзины.
 Так же класс предоставляет набор методов для взаимодействия с этими данными
 - `add(id: string): void` - добавляет товар в корзину
 - `remove(id: string): void` - удаляет товар из корзины
 - `confirm(): IOrder` - совершить покупку товраов из корзины
 - `reset(order: TOrderResponse): void` - обнулить данные корзины при получении `id` заказа
+
+#### Класс OrderModel
+Класс отвечает за логику работы с данными текущего заказа
+Поля класса:
+- `orderInfo: TOrderInfo` - объект с данными заказа.
+- `orderStage: number` - стадия заказа.
+- `events: IEvents` - инстант класса `EventEmitter` для инициации событий заполнения данных заказа.
+Методы:
+- `set primary(data: TOrderPrimaryInfo)` - сеттер первичных данных о заказе
+- `set secondary(data: TOrderSecondaryInfo)` - сеттер вторичных данных о заказе
+- `get info(): TOrderInfo` - геттер данных о заказе
 - `checkPayValidation(data: Record<keyof IOrder, string>): boolean` - проверяет объект с данными заказа на валидность
 
 
