@@ -1,4 +1,4 @@
-import { IEvents } from "../components/base/events";
+import { IEvents } from "../components/base/Events";
 
 export interface IProduct {
     id: string;
@@ -30,7 +30,7 @@ export interface IBasketModel {
     events: IEvents;
     add(id: string): void;
     remove(id: string): void;
-    confirm(): IOrder;
+    confirm(): void;
     reset(order: TOrderResponse): void; 
 };
 
@@ -42,6 +42,11 @@ export interface IOrderModel {
     set secondary(data: TOrderSecondaryInfo);
     get info(): TOrderInfo;
     checkPayValidation(data: Record<keyof TOrderInfo, string>): boolean;
+};
+
+export interface TProductList {
+    total: number;
+    items: IProduct[];
 };
 
 export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'>;
