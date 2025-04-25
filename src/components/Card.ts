@@ -1,27 +1,19 @@
-import { IProduct } from "../types";
+import { IProduct, TProductInfo } from "../types";
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
 import { EventEmitter } from "./base/Events";
 
-export class Card extends Component<IProduct> {
-    protected cardCategory: HTMLElement;
+export class Card<T> extends Component<T> {
     protected cardTitle: HTMLElement;
-    protected cardImage: HTMLImageElement;
     protected cardPrice: HTMLElement;
     protected cardId: string;
 
     constructor(container: HTMLElement, protected events: EventEmitter) {
         super(container)
-        this.cardCategory = ensureElement('.card__category', this.container);
         this.cardTitle = ensureElement('.card__title', this.container);
-        this.cardImage = ensureElement('.card__image', this.container) as HTMLImageElement;
         this.cardPrice = ensureElement('.card__price', this.container);
 
-        this.container.addEventListener('click', () => this.events.emit('card:modal', {id: this.cardId}));
-    }
-
-    set category(value: string) {
-        this.setText(this.cardCategory, value);
+        
     }
 
     set title(value: string) {
@@ -32,16 +24,34 @@ export class Card extends Component<IProduct> {
         this.setText(this.cardPrice, value);
     }
 
-    set image(value: string) {
-        this.setImage(this.cardImage, value);
-    }
-
     set id(value: string) {
         this.cardId = value;
     }
 }
 
-export class FullCard extends Card { 
+export class GalleryCard extends Card<IProduct> {
+    protected cardCategory: HTMLElement;
+    protected cardImage: HTMLImageElement;
+
+    constructor(container: HTMLElement, events: EventEmitter) {
+        super(container, events);
+        this.cardCategory = ensureElement('.card__category', this.container);
+        this.cardImage = ensureElement('.card__image', this.container) as HTMLImageElement;
+
+        this.container.addEventListener('click', () => this.events.emit('card:modal', {id: this.cardId}));
+    }
+
+    set category(value: string) {
+        this.setText(this.cardCategory, value);
+    }
+
+    set image(value: string) {
+        this.setImage(this.cardImage, value);
+    }
+
+}
+
+export class FullCard extends GalleryCard { 
     protected cardText: HTMLElement;
     protected cardButton: HTMLButtonElement;
 
@@ -50,9 +60,28 @@ export class FullCard extends Card {
         this.cardText = ensureElement('.card__text', this.container);
         this.cardButton = ensureElement('.card__button', this.container) as HTMLButtonElement;
         this.cardButton.textContent = 'В корзину';
+
+        this.cardButton.addEventListener('click', () => this.events.emit('card_full:select', {id: this.cardId}));
     }
 
     set text(value: string) {
         this.setText(this.cardText, value);
+    }
+}
+
+export class CompactCard extends Card<TProductInfo> {
+    protected cardIndex: HTMLElement;
+    protected cardButton: HTMLButtonElement;
+    
+    constructor(container: HTMLElement, events: EventEmitter) {
+        super(container, events);
+        this.cardIndex = ensureElement('.basket__item-index', this.container);
+        this.cardButton = ensureElement('.card__button', this.container) as HTMLButtonElement;
+
+        this.cardButton.addEventListener('click', () => this.events.emit('basket__item:remove', {index: this.cardIndex.textContent}));
+    }
+
+    set index(value: number) {
+        this.cardIndex.textContent = String(value);
     }
 }

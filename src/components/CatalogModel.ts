@@ -13,7 +13,6 @@ export class CatalogModel implements ICatalogModel {
     }
 
     getProduct(id: string): IProduct {
-        this.preview = id;
         return this.items.find((item) => item.id === id)
     };
 };

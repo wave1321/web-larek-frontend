@@ -28,10 +28,11 @@ export interface ICatalogModel {
 export interface IBasketModel {
     items: TProductInfo[];
     events: IEvents;
-    add(id: string): void;
-    remove(id: string): void;
+    add(item: TProductInfo): void;
+    remove(id: number): void;
+    getTotal(): number;
     confirm(): void;
-    reset(order: TOrderResponse): void; 
+    reset(): void; 
 };
 
 export interface IOrderModel {
@@ -49,7 +50,9 @@ export interface TProductList {
     items: IProduct[];
 };
 
-export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'>;
+export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {
+    index?: number;
+};
 
 export type TOrderPrimaryInfo  = Pick<IOrder, 'payment' | 'address'>;
 

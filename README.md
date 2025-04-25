@@ -103,9 +103,11 @@ type TProductInfo = Pick<IProduct, 'title' | 'price'>;
 interface IBasketModel {
     items: TProductInfo[];
     events: IEvents;
-    add(id: string): void;
+    add(item: TProductInfo): void;
     remove(id: string): void;
-    reset(): void;
+    getTotal(): number;
+    confirm(): void;
+    reset(): void; 
 };
 ```
 
@@ -198,8 +200,9 @@ type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
 - `items: TProductInfo[]` - массив выбранных для покупки товаров
 - `events: IEvents` - инстант класса `EventEmitter` для инициации события при изменении корзины.
 Так же класс предоставляет набор методов для взаимодействия с этими данными
-- `add(id: string): void` - добавляет товар в корзину
+- `add(item: TProductInfo): void` - добавляет товар в корзину
 - `remove(id: string): void` - удаляет товар из корзины
+- `getTotal(): number` - считает сумму стоимости товаров в корзине
 - `confirm(): IOrder` - совершить покупку товраов из корзины
 - `reset(order: TOrderResponse): void` - обнулить данные корзины при получении `id` заказа
 
@@ -266,6 +269,7 @@ type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
 
 *События, возникающие при взаимодействии пользователя с интерфейсом (генерируются классами, отвечающими за представление)*
 - `card:modal` - нажатие на карточку в каталоге
+- `basket:open` - нажали на иконку корзины в шапке сайта
 - `modal:open` - открыли модальное окно
 - `modal:close` - закрыли модальное окно
 
