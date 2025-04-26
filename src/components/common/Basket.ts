@@ -1,11 +1,12 @@
 import {Component} from "../base/Component";
-import {cloneTemplate, createElement, ensureElement} from "../../utils/utils";
+import {createElement, ensureElement} from "../../utils/utils";
 import {EventEmitter} from "../base/Events";
+
 
 interface IBasketView {
     items: HTMLElement[];
     total: number;
-    selected: string[];
+    selected: number;
 }
 
 export class Basket extends Component<IBasketView> {
@@ -18,14 +19,15 @@ export class Basket extends Component<IBasketView> {
 
         this._list = ensureElement<HTMLElement>('.basket__list', this.container);
         this._total = this.container.querySelector('.basket__price');
-        this._button = this.container.querySelector('.basket__action');
+        this._button = this.container.querySelector('.basket__button');
 
         if (this._button) {
             this._button.addEventListener('click', () => {
-                events.emit('order:open');
+                events.emit('basket:confirm');
             });
         }
 
+        this.selected = 0;
         this.items = [];
     }
 
@@ -43,8 +45,8 @@ export class Basket extends Component<IBasketView> {
         return Array.from(this._list.children) as HTMLElement[];
     }
 
-    set selected(items: string[]) {
-        if (items.length) {
+    set selected(items: number) {
+        if ((this.total > 0) && (items > 0) ) {
             this.setDisabled(this._button, false);
         } else {
             this.setDisabled(this._button, true);
@@ -56,6 +58,6 @@ export class Basket extends Component<IBasketView> {
     }
 
     get total(): number {
-        return this.total;
+        return (parseInt(this._total.textContent)) || 0;
     }
 }

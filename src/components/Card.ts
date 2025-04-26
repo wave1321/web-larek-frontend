@@ -11,9 +11,7 @@ export class Card<T> extends Component<T> {
     constructor(container: HTMLElement, protected events: EventEmitter) {
         super(container)
         this.cardTitle = ensureElement('.card__title', this.container);
-        this.cardPrice = ensureElement('.card__price', this.container);
-
-        
+        this.cardPrice = ensureElement('.card__price', this.container);  
     }
 
     set title(value: string) {
@@ -21,7 +19,7 @@ export class Card<T> extends Component<T> {
     }
 
     set price(value: number) {
-        this.setText(this.cardPrice, value);
+        this.setText(this.cardPrice, value ? value + ' синапсов' : 'Бесценно');
     }
 
     set id(value: string) {
@@ -55,13 +53,21 @@ export class FullCard extends GalleryCard {
     protected cardText: HTMLElement;
     protected cardButton: HTMLButtonElement;
 
-    constructor(container: HTMLElement, events: EventEmitter) {
+    constructor(container: HTMLElement, events: EventEmitter, inBasket: boolean = false, nullPrice: boolean) {
         super(container, events);
         this.cardText = ensureElement('.card__text', this.container);
         this.cardButton = ensureElement('.card__button', this.container) as HTMLButtonElement;
-        this.cardButton.textContent = 'В корзину';
-
-        this.cardButton.addEventListener('click', () => this.events.emit('card_full:select', {id: this.cardId}));
+        if (!nullPrice) {
+            if (!inBasket) { 
+                this.cardButton.textContent = 'В корзину'
+                this.cardButton.addEventListener('click', () => this.events.emit('card_full:select', {id: this.cardId}));
+            } else {
+                this.cardButton.textContent = 'Удалить'
+                this.cardButton.addEventListener('click', () => this.events.emit('basket__item:remove', {id: this.cardId}));
+            }
+        } else {
+            this.cardButton.textContent = 'Не продается!'
+        }
     }
 
     set text(value: string) {
@@ -78,10 +84,14 @@ export class CompactCard extends Card<TProductInfo> {
         this.cardIndex = ensureElement('.basket__item-index', this.container);
         this.cardButton = ensureElement('.card__button', this.container) as HTMLButtonElement;
 
-        this.cardButton.addEventListener('click', () => this.events.emit('basket__item:remove', {index: this.cardIndex.textContent}));
+        this.cardButton.addEventListener('click', () => this.events.emit('basket__item:remove', {id: this.cardId}));
     }
 
     set index(value: number) {
         this.cardIndex.textContent = String(value);
+    }
+
+    get index(): number {
+        return parseInt(this.cardIndex.textContent);
     }
 }

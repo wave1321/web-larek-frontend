@@ -4,8 +4,11 @@ import { BasketModel } from './components/BasketModel';
 import { Card, CompactCard, FullCard, GalleryCard } from './components/Card';
 import { CatalogModel } from './components/CatalogModel';
 import { Basket } from './components/common/Basket';
+import { Form } from './components/common/Form';
 import { Modal } from './components/common/Modal';
 import { LarekApi } from './components/LarekApi';
+import { OrderContacts, OrderInfo } from './components/Order';
+import { OrderModel } from './components/OrderModel';
 import { Page } from './components/Page';
 import './scss/styles.scss';
 import { IProduct } from './types';
@@ -18,15 +21,20 @@ const api = new LarekApi(CDN_URL, API_URL);
 
 const catalogModel = new CatalogModel(events);
 const basketModel = new BasketModel(events);
+const orderModel = new OrderModel(events);
 
 const galleryCardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const fullCardTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const compactCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+const orderInfoTemplate = ensureElement<HTMLTemplateElement>('#order');
+const orderContactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
 const page = new Page(document.querySelector('.page__wrapper') as HTMLElement, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
+const orderInfoForm = new OrderInfo(cloneTemplate<HTMLFormElement>(orderInfoTemplate), events);
+const orderContactsForm = new OrderContacts(cloneTemplate<HTMLFormElement>(orderContactsTemplate), events);
 
 
 api.getProducts()
@@ -46,7 +54,9 @@ events.on('catalog:update', () => {
 });
 
 events.on('card:modal', ({id}: {id: string}) => {
-    const itemHTML = new FullCard(cloneTemplate(fullCardTemplate), events).render(catalogModel.getProduct(id))
+    const product = catalogModel.getProduct(id);
+    const itemHTML = new FullCard(cloneTemplate(fullCardTemplate), 
+        events, basketModel.hasItem(id), (!product.price)).render(product)
     modal.render({
         content: itemHTML
     });
@@ -58,8 +68,8 @@ events.on('card_full:select', ({id}: {id: string}) => {
     modal.close();
 });
 
-events.on('basket__item:remove', ({index}: {index: number}) => {
-    basketModel.remove(index);
+events.on('basket__item:remove', ({id}: {id: string}) => {
+    basketModel.remove(id);
 });
 
 events.on('basket:change', () => {
@@ -75,12 +85,25 @@ events.on('basket:change', () => {
         });
     })
     basket.total = basketModel.getTotal();
+    basket.selected = count;
 });
 
 events.on('basket:open', () => {
     modal.render({
         content: basket.render()
     }); 
+});
+
+events.on('basket:confirm', () => {
+    const orderInfo = orderModel.orderInfo;
+    orderInfoForm.setPaymentCheck(orderInfo.payment)
+    modal.render({
+        content: orderInfoForm.render({
+            address: orderInfo.address,
+            valid: false,
+            errors: []
+        })
+    });
 });
 
 // Блокируем прокрутку страницы если открыта модалка

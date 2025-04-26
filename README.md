@@ -105,6 +105,7 @@ interface IBasketModel {
     events: IEvents;
     add(item: TProductInfo): void;
     remove(id: string): void;
+    hasItem(id: string): boolean;
     getTotal(): number;
     confirm(): void;
     reset(): void; 
@@ -203,6 +204,7 @@ type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
 - `add(item: TProductInfo): void` - добавляет товар в корзину
 - `remove(id: string): void` - удаляет товар из корзины
 - `getTotal(): number` - считает сумму стоимости товаров в корзине
+- `hasItem(id: string): boolean` - проверяет наличие товара в корзине
 - `confirm(): IOrder` - совершить покупку товраов из корзины
 - `reset(order: TOrderResponse): void` - обнулить данные корзины при получении `id` заказа
 
@@ -272,12 +274,11 @@ type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
 - `basket:open` - нажали на иконку корзины в шапке сайта
 - `modal:open` - открыли модальное окно
 - `modal:close` - закрыли модальное окно
-
 - `card_full:select` - выбор продукта для добавления в корзину
-
 - `basket__item:remove` - выбор продукта для удаления из корзины
 
 - `basket:confirm` - подтверждение покупки содержимого корзины
+
 - `order:submit` - подтверждение заполнения информации о покупки
 - `contacts:submit` - подтверждение заполнения контактов и совершение покупки
 - `order-success:done` - завершение процесса покупки и очистка корзины

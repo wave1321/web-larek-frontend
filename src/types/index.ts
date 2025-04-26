@@ -29,7 +29,7 @@ export interface IBasketModel {
     items: TProductInfo[];
     events: IEvents;
     add(item: TProductInfo): void;
-    remove(id: number): void;
+    remove(id: string): void;
     getTotal(): number;
     confirm(): void;
     reset(): void; 
@@ -37,12 +37,10 @@ export interface IBasketModel {
 
 export interface IOrderModel {
     orderInfo: TOrderInfo;
-    orderStage: number;
+    orderContacts: TOrderContacts;
     events: IEvents;
-    set primary(data: TOrderPrimaryInfo);
-    set secondary(data: TOrderSecondaryInfo);
-    get info(): TOrderInfo;
-    checkPayValidation(data: Record<keyof TOrderInfo, string>): boolean;
+    checkInfoValidation(data: Record<keyof TOrderInfo, string>): boolean;
+    checkContactsValidation(data: Record<keyof TOrderContacts, string>): boolean;
 };
 
 export interface TProductList {
@@ -54,12 +52,6 @@ export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {
     index?: number;
 };
 
-export type TOrderPrimaryInfo  = Pick<IOrder, 'payment' | 'address'>;
+export type TOrderInfo = Pick<IOrder, 'payment' | 'address'>;
 
-export type TOrderSecondaryInfo  = Pick<IOrder, 'email' | 'phone'>; 
-
-export type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
-
-export type TOrderResponse = Pick<IOrder, 'total'> & {
-    id: string;
-};
+export type TOrderContacts = Pick<IOrder, 'email' | 'phone'>;
