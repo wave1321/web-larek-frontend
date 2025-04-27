@@ -85,7 +85,6 @@ interface IOrder {
 ```
 interface ICatalogModel {
     items: IProduct[];
-    preview: string | null;
     setItems(items: IProduct[]): void;
     getProduct(id: string): IProduct;
 };
@@ -94,7 +93,9 @@ interface ICatalogModel {
 Данные карточки, используемые в корзине
 
 ```
-type TProductInfo = Pick<IProduct, 'title' | 'price'>;
+export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {
+    index?: number;
+};
 ```
 
 Интерфейс для хранения корзины
@@ -107,16 +108,8 @@ interface IBasketModel {
     remove(id: string): void;
     hasItem(id: string): boolean;
     getTotal(): number;
-    confirm(): void;
+    getIdList(): string[]
     reset(): void; 
-};
-```
-
-Данные получаемые от сервера при оформении заказа
-
-```
-type TOrderResponse = Pick<IOrder, 'total'> & {
-    id: string;
 };
 ```
 
@@ -124,33 +117,40 @@ type TOrderResponse = Pick<IOrder, 'total'> & {
 
 ```
 export interface IOrderModel {
-    orderInfo: TOrderInfo;
-    orderStage: number;
+    orderInfo: Partial<TFullOrder>;
     events: IEvents;
-    set primary(data: TOrderPrimaryInfo);
-    set secondary(data: TOrderSecondaryInfo);
-    get info(): TOrderInfo;
-    checkPayValidation(data: Record<keyof TOrderInfo, string>): boolean;
+    getOrderInfo(): TFullOrder
+    setOrderField(field: keyof TFullOrder, value: string): void;
+    checkInfoValidation(): boolean;
+    checkContactsValidation(): boolean;
+    formErrorsChange(errors: FormErrors): boolean;
+    reset(): void;
 };
 ```
 
 Тип первичных данных объекта ифнормации заказа
 
 ```
-type TOrderPrimaryInfo  = Pick<IOrder, 'payment' | 'address'>;
+export type TOrderInfo = Pick<IOrder, 'payment' | 'address'>;
 ```
 
-Тип вторичных данных объекта ифнормации заказа
+Тип данных объекта ифнормации заказа с контактами
 
 ```
-type TOrderSecondaryInfo  = Pick<IOrder, 'email' | 'phone'>; 
+export type TOrderContacts = Pick<IOrder, 'email' | 'phone'>;
 ```
 
 Тип полного объекта информации заказа
+```
+export type TFullOrder = TOrderInfo & TOrderContacts;
+```
 
+Тип данных содержащий ошибку и указатель на поле формы
 ```
-type TOrderInfo = TOrderPrimaryInfo & TOrderSecondaryInfo;
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
 ```
+
+
 
 
 ### Базовый код

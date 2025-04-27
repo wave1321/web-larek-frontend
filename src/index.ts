@@ -14,14 +14,18 @@ import { IOrder, TFullOrder } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
+// Создаем брокер событий
 const events = new EventEmitter();
 
+// Создаем экземпляр api с указанием адресов CDN и сервера
 const api = new LarekApi(CDN_URL, API_URL);
 
+// Создаем экземпляры классов данных
 const catalogModel = new CatalogModel(events);
 const basketModel = new BasketModel(events);
 const orderModel = new OrderModel(events);
 
+// Записываем все возможные темплейты
 const galleryCardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const fullCardTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const compactCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
@@ -30,13 +34,14 @@ const orderInfoTemplate = ensureElement<HTMLTemplateElement>('#order');
 const orderContactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
+// Создаем экземпляры классов представления
 const page = new Page(document.querySelector('.page__wrapper') as HTMLElement, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const orderInfoForm = new OrderInfo(cloneTemplate<HTMLFormElement>(orderInfoTemplate), events);
 const orderContactsForm = new OrderContacts(cloneTemplate<HTMLFormElement>(orderContactsTemplate), events);
 
-
+// Получаем данные продуктов от сервера
 api.getProducts()
     .then((data) => {
         catalogModel.setItems(data);
@@ -44,6 +49,7 @@ api.getProducts()
     .then(() => events.emit('catalog:update'))
     .catch(err => console.log(err));
 
+// Обновление каталога с продуктми
 events.on('catalog:update', () => {
     const itemsHTMLArray = catalogModel.items.map(item => 
         new GalleryCard(cloneTemplate(galleryCardTemplate), events).render(item)
@@ -53,25 +59,30 @@ events.on('catalog:update', () => {
     })
 });
 
+// Открытие модального окна при нажатии на карточку каталога
 events.on('card:modal', ({id}: {id: string}) => {
     const product = catalogModel.getProduct(id);
     const itemHTML = new FullCard(cloneTemplate(fullCardTemplate), 
-        events, basketModel.hasItem(id), (!product.price)).render(product)
+        events, basketModel.hasItem(id), (!product.price))
+        .render(product)
     modal.render({
         content: itemHTML
     });
 });
 
+// Добавление товара в корзину
 events.on('card_full:select', ({id}: {id: string}) => {
     const item = catalogModel.getProduct(id);
     basketModel.add(item);
     modal.close();
 });
 
+// Удаление товара из корзины
 events.on('basket__item:remove', ({id}: {id: string}) => {
     basketModel.remove(id);
 });
 
+// Изменение содержания корзины
 events.on('basket:change', () => {
     const count = basketModel.items.length;
     page.counter = count;
@@ -88,12 +99,14 @@ events.on('basket:change', () => {
     basket.selected = count;
 });
 
+// Открытие корзины
 events.on('basket:open', () => {
     modal.render({
         content: basket.render()
     }); 
 });
 
+// Подтверждение корзины и переход на страницу оформления заказа
 events.on('basket:confirm', () => {
     const orderInfo = orderModel.orderInfo;
     const infoValid = (!orderInfo.address) ? false : true;
@@ -106,6 +119,7 @@ events.on('basket:confirm', () => {
     });
 });
 
+// Подтверждение информации заказа и переход на страницу контактов заказа
 events.on('order:submit', () => {
     const orderInfo = orderModel.orderInfo;
     const infoValid = ((!orderInfo.email) || (!orderInfo.phone))? false : true;
@@ -133,12 +147,14 @@ events.on('order:change', (data: { field: keyof TFullOrder, value: string }) => 
     orderModel.setOrderField(data.field, data.value);
 });
 
+// Отправка заказа на сервер и переход на страницу успешной покупки
 events.on('contacts:submit', () => {
     const readyOrders: IOrder = {
         ...orderModel.getOrderInfo(), 
         total: basketModel.getTotal(),
         items: basketModel.getIdList()
     };
+    console.log(readyOrders);
     api.postOrder(readyOrders)
         .then(res => {
             const success = new Success(cloneTemplate(successTemplate), {

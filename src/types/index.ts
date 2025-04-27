@@ -20,7 +20,6 @@ export interface IOrder {
 
 export interface ICatalogModel {
     items: IProduct[];
-    preview: string | null;
     setItems(items: IProduct[]): void;
     getProduct(id: string): IProduct;
 };
@@ -39,13 +38,12 @@ export interface IBasketModel {
 export interface IOrderModel {
     orderInfo: Partial<TFullOrder>;
     events: IEvents;
-    checkInfoValidation(): boolean;
-    checkContactsValidation(): boolean;
-};
-
-export interface TProductList {
-    total: number;
-    items: IProduct[];
+    getOrderInfo(): TFullOrder
+    setOrderField(field: keyof TFullOrder, value: string): void;
+   /* checkInfoValidation(): boolean;
+    checkContactsValidation(): boolean;*/
+    formErrorsChange(errors: FormErrors): boolean;
+    reset(): void;
 };
 
 export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {

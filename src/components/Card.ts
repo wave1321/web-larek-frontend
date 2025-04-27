@@ -1,4 +1,5 @@
 import { IProduct, TProductInfo } from "../types";
+import { cardCategoryColor } from "../utils/constants";
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
 import { EventEmitter } from "./base/Events";
@@ -41,6 +42,7 @@ export class GalleryCard extends Card<IProduct> {
 
     set category(value: string) {
         this.setText(this.cardCategory, value);
+        this.cardCategory.classList.add(cardCategoryColor[value]);
     }
 
     set image(value: string) {

@@ -9,16 +9,16 @@ export class OrderInfo extends Form<TOrderInfo> {
 
         (this.container.elements.namedItem('card') as HTMLButtonElement).addEventListener('click', () => {
             this.setButtonCheck('card');
-            events.emit('order:change', {payment: 'card'});
+            this.onInputChange('payment', 'Онлайн');
         });
 
         (this.container.elements.namedItem('cash') as HTMLButtonElement).addEventListener('click', () => {
             this.setButtonCheck('cash');
-            events.emit('order:change', {payment: 'cash'});
+            this.onInputChange('payment', 'При получении');
         });
 
         this.setButtonCheck('card');
-        events.emit('order:change', {payment: 'card'});
+        this.onInputChange('payment', 'Онлайн');
     }
 
     set address(value: string) {
