@@ -1,51 +1,51 @@
 import { TOrderContacts, TOrderInfo } from "../types";
-import { ensureElement } from "../utils/utils";
-import { EventEmitter, IEvents } from "./base/Events";
+import { IEvents } from "./base/Events";
 import { Form } from "./common/Form";
 
 
 export class OrderInfo extends Form<TOrderInfo> {
     constructor (container: HTMLFormElement, events: IEvents) {
         super(container, events);
-        
 
         (this.container.elements.namedItem('card') as HTMLButtonElement).addEventListener('click', () => {
-            //this.events.emit('payment:change', 'Онлайн') 
-            (this.container.elements.namedItem('card') as HTMLButtonElement).classList.remove('button_alt');
-            (this.container.elements.namedItem('cash') as HTMLButtonElement).classList.add('button_alt');
+            this.setButtonCheck('card');
+            events.emit('order:change', {payment: 'card'});
         });
 
         (this.container.elements.namedItem('cash') as HTMLButtonElement).addEventListener('click', () => {
-            //this.events.emit('payment:change', 'При получении')
-            (this.container.elements.namedItem('card') as HTMLButtonElement).classList.add('button_alt');
-            (this.container.elements.namedItem('cash') as HTMLButtonElement).classList.remove('button_alt');
+            this.setButtonCheck('cash');
+            events.emit('order:change', {payment: 'cash'});
         });
+
+        this.setButtonCheck('card');
+        events.emit('order:change', {payment: 'card'});
     }
 
     set address(value: string) {
         (this.container.elements.namedItem('address') as HTMLInputElement).textContent = value
     }
 
-    setCardButonCheck() {
-        
-
-    }
-
-    setPaymentCheck(value: string) {
-        if (value === 'Онлайн') {
-            (this.container.elements.namedItem('card') as HTMLButtonElement).classList.remove('button_alt');
-        } else {
-            (this.container.elements.namedItem('card') as HTMLButtonElement).classList.add('button_alt');
-        }
-
-        if (value === 'При получении') {
-            (this.container.elements.namedItem('cash') as HTMLButtonElement).classList.remove('button_alt');
-        } else {
-            (this.container.elements.namedItem('cash') as HTMLButtonElement).classList.add('button_alt');
-        }
+    setButtonCheck(value: string) {
+        this.container.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
+            if (button.name === value) {
+                button.classList.remove('button_alt');
+            } else {
+                button.classList.add('button_alt');
+            }
+        })
     }
 }
 
 export class OrderContacts extends Form<TOrderContacts> {
+    constructor (container: HTMLFormElement, events: IEvents) {
+        super(container, events);
+    }
 
+    set email(value: string) {
+        (this.container.elements.namedItem('email') as HTMLInputElement).textContent = value
+    }
+
+    set phone(value: string) {
+        (this.container.elements.namedItem('phone') as HTMLInputElement).textContent = value
+    }  
 }

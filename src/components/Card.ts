@@ -60,7 +60,10 @@ export class FullCard extends GalleryCard {
         if (!nullPrice) {
             if (!inBasket) { 
                 this.cardButton.textContent = 'В корзину'
-                this.cardButton.addEventListener('click', () => this.events.emit('card_full:select', {id: this.cardId}));
+                this.cardButton.addEventListener('click', (evt) => {
+                    this.events.emit('card_full:select', {id: this.cardId});
+                    evt.stopPropagation()
+                });
             } else {
                 this.cardButton.textContent = 'Удалить'
                 this.cardButton.addEventListener('click', () => this.events.emit('basket__item:remove', {id: this.cardId}));

@@ -30,17 +30,17 @@ export interface IBasketModel {
     events: IEvents;
     add(item: TProductInfo): void;
     remove(id: string): void;
+    hasItem(id: string): boolean;
     getTotal(): number;
-    confirm(): void;
+    getIdList(): string[]
     reset(): void; 
 };
 
 export interface IOrderModel {
-    orderInfo: TOrderInfo;
-    orderContacts: TOrderContacts;
+    orderInfo: Partial<TFullOrder>;
     events: IEvents;
-    checkInfoValidation(data: Record<keyof TOrderInfo, string>): boolean;
-    checkContactsValidation(data: Record<keyof TOrderContacts, string>): boolean;
+    checkInfoValidation(): boolean;
+    checkContactsValidation(): boolean;
 };
 
 export interface TProductList {
@@ -55,3 +55,7 @@ export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {
 export type TOrderInfo = Pick<IOrder, 'payment' | 'address'>;
 
 export type TOrderContacts = Pick<IOrder, 'email' | 'phone'>;
+
+export type TFullOrder = TOrderInfo & TOrderContacts;
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;

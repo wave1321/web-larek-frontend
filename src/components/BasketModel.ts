@@ -2,11 +2,19 @@ import { IBasketModel, TProductInfo } from "../types";
 import { IEvents } from "./base/Events";
 
 export class BasketModel implements IBasketModel {
-    items: TProductInfo[] = [];
+    protected _items: TProductInfo[] = [];
     events: IEvents;
 
     constructor(events: IEvents) {
         this.events = events;
+    }
+
+    set items(items: TProductInfo[]) {
+        this._items = items;
+    }
+
+    get items(): TProductInfo[] {
+        return this._items;
     }
 
     add(item: TProductInfo): void {
@@ -23,11 +31,13 @@ export class BasketModel implements IBasketModel {
         return this.items.some((item) => item.id === id );
     }
 
+    getIdList(): string[] {
+        return this.items.map(({id}) => id);
+    }
+
     getTotal(): number {
         return this.items.reduce((sum, {price}) => sum + price, 0);
     }
-
-    confirm(): void {};
 
     reset(): void {
         this.items = [];

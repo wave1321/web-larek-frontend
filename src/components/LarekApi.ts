@@ -1,10 +1,9 @@
-import { IProduct, TProductList } from "../types";
+import { IOrder, IProduct } from "../types";
 import { Api, ApiListResponse, ApiOrderResponse } from "./base/Api";
-import { IEvents } from "./base/Events";
 
 export interface ILarekApi {
     getProducts: () => Promise<IProduct[]>;
-    postOrder: (data: TProductList) => Promise<ApiOrderResponse>;
+    postOrder: (data: IOrder) => Promise<ApiOrderResponse>;
 }
 
 export class LarekApi extends Api implements ILarekApi {
@@ -24,7 +23,8 @@ export class LarekApi extends Api implements ILarekApi {
         )
     }
 
-    postOrder(data: TProductList): Promise<ApiOrderResponse> {
-        return this.post('/order/', data, 'POST');
+    postOrder(data: IOrder): Promise<ApiOrderResponse> {
+        return this.post('/order/', data, 'POST').then((res: ApiOrderResponse) => 
+            {console.log(res); return res});
     }
 }

@@ -1,18 +1,17 @@
-import { IOrderModel, TOrderContacts, TOrderInfo } from "../types";
+import { FormErrors, IOrderModel, TFullOrder, TOrderContacts, TOrderInfo } from "../types";
 import { EventEmitter } from "./base/Events";
 
 export class OrderModel implements IOrderModel {
-        protected info: TOrderInfo;
-        protected contacts: TOrderContacts;
+        protected info: Partial<TFullOrder>;
+        formErrors: FormErrors = {};
         events: EventEmitter;
 
         constructor(events: EventEmitter) {
             this.events = events
-            this.orderInfo = { address: '', payment: 'Онлайн' };
-            this.orderContacts = { phone: '', email: '' };
+            this.orderInfo = { address: '', payment: 'Онлайн', phone: '', email: '' };
         };
 
-        set orderInfo(data: TOrderInfo) {
+        set orderInfo(data: Partial<TFullOrder>) {
             this.info = data;
         };
 
@@ -20,19 +19,46 @@ export class OrderModel implements IOrderModel {
             return this.info;
         }
 
-        set orderContacts(data: TOrderContacts) {
-            this.contacts = data;
+        getOrderInfo(): TFullOrder {
+            return this.info as TFullOrder;
+        }
+
+        setOrderField(field: keyof TFullOrder, value: string) {
+            this.info[field] = value;
+
+            if (this.checkInfoValidation()) {
+                this.checkContactsValidation()
+            } 
+        }
+
+        checkInfoValidation() {
+            const errors: typeof this.formErrors = {};
+            if (!this.info.address) {
+                errors.address = 'Необходимо указать адрес';
+            }
+            return this.formErrorsChange(errors)
+        }
+
+        checkContactsValidation(): boolean {
+            const errors: typeof this.formErrors = {};
+            if (!this.info.email) {
+                errors.email = 'Необходимо указать email';
+            }
+            if (!this.info.phone) {
+                errors.phone = 'Необходимо указать телефон';
+            }
+            return this.formErrorsChange(errors);
         };
 
-        get orderContacts() {
-            return this.contacts;
-        };
+        formErrorsChange(errors: FormErrors) {
+            this.formErrors = errors;
+            this.events.emit('formErrors:change', this.formErrors);
+            return Object.keys(errors).length === 0;
+        }
 
-        checkInfoValidation(data: Record<keyof TOrderInfo, string>): boolean {
-            return true
-        };
-
-        checkContactsValidation(data: Record<keyof TOrderContacts, string>): boolean {
-            return true
-        };
+        reset() {
+            this.info = { address: '', payment: 'Онлайн', phone: '', email: '' };
+            this.formErrors = {};
+            this.events.emit('order:change', {});
+        }
 }

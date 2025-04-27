@@ -1,17 +1,16 @@
-import { ApiListResponse } from './components/base/Api';
 import { EventEmitter } from './components/base/Events';
 import { BasketModel } from './components/BasketModel';
-import { Card, CompactCard, FullCard, GalleryCard } from './components/Card';
+import { CompactCard, FullCard, GalleryCard } from './components/Card';
 import { CatalogModel } from './components/CatalogModel';
 import { Basket } from './components/common/Basket';
-import { Form } from './components/common/Form';
 import { Modal } from './components/common/Modal';
 import { LarekApi } from './components/LarekApi';
 import { OrderContacts, OrderInfo } from './components/Order';
 import { OrderModel } from './components/OrderModel';
 import { Page } from './components/Page';
+import { Success } from './components/Success';
 import './scss/styles.scss';
-import { IProduct } from './types';
+import { IOrder, TFullOrder } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
@@ -29,6 +28,7 @@ const compactCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 const orderInfoTemplate = ensureElement<HTMLTemplateElement>('#order');
 const orderContactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 const page = new Page(document.querySelector('.page__wrapper') as HTMLElement, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
@@ -96,14 +96,66 @@ events.on('basket:open', () => {
 
 events.on('basket:confirm', () => {
     const orderInfo = orderModel.orderInfo;
-    orderInfoForm.setPaymentCheck(orderInfo.payment)
+    const infoValid = (!orderInfo.address) ? false : true;
     modal.render({
         content: orderInfoForm.render({
             address: orderInfo.address,
-            valid: false,
+            valid: infoValid,
             errors: []
         })
     });
+});
+
+events.on('order:submit', () => {
+    const orderInfo = orderModel.orderInfo;
+    const infoValid = ((!orderInfo.email) || (!orderInfo.phone))? false : true;
+    modal.render({
+        content: orderContactsForm.render({
+            email: orderInfo.email,
+            phone: orderInfo.phone,
+            valid: infoValid,
+            errors: []
+        })
+    });
+});
+
+// Изменение состояния валидации форм
+events.on('formErrors:change', (errors: Partial<TFullOrder>) => {
+    const { address, email, phone } = errors;
+    orderInfoForm.valid = !address;
+    orderInfoForm.errors = Object.values({address}).join();
+    orderContactsForm.valid = !email && !phone;
+    orderContactsForm.errors = Object.values({phone, email}).filter(i => !!i).join('; ');   
+});
+
+// Изменение одного из полей форм
+events.on('order:change', (data: { field: keyof TFullOrder, value: string }) => {
+    orderModel.setOrderField(data.field, data.value);
+});
+
+events.on('contacts:submit', () => {
+    const readyOrders: IOrder = {
+        ...orderModel.getOrderInfo(), 
+        total: basketModel.getTotal(),
+        items: basketModel.getIdList()
+    };
+    api.postOrder(readyOrders)
+        .then(res => {
+            const success = new Success(cloneTemplate(successTemplate), {
+                onClick: () => { modal.close() }
+            });
+            modal.render({
+                content: success.render({ total: res.total })
+            });
+        })
+        .then(() => {
+            orderModel.reset();
+            basketModel.reset();
+            orderContactsForm.reset();
+            orderInfoForm.reset();
+            orderInfoForm.setButtonCheck('card');
+        })
+        .catch(err => console.log(err));
 });
 
 // Блокируем прокрутку страницы если открыта модалка

@@ -11,6 +11,7 @@ export class Form<T> extends Component<IFormState> {
     protected _submit: HTMLButtonElement;
     protected _errors: HTMLElement;
 
+
     constructor(protected container: HTMLFormElement, protected events: IEvents) {
         super(container);
 
@@ -31,7 +32,7 @@ export class Form<T> extends Component<IFormState> {
     }
 
     protected onInputChange(field: keyof T, value: string) {
-        this.events.emit(`${this.container.name}.${String(field)}:change`, {
+        this.events.emit('order:change', {
             field,
             value
         });
@@ -41,8 +42,20 @@ export class Form<T> extends Component<IFormState> {
         this._submit.disabled = !value;
     }
 
+    get valid(): boolean {
+        return this._submit.disabled;
+    }
+
     set errors(value: string) {
         this.setText(this._errors, value);
+    }
+
+    get errors(): string {
+        return this._errors.textContent;
+    }
+
+    reset() {
+        this.container.reset();
     }
 
     render(state: Partial<T> & IFormState) {
@@ -50,6 +63,5 @@ export class Form<T> extends Component<IFormState> {
         super.render({valid, errors});
         Object.assign(this, inputs);
         return this.container;
-
     }
 }
