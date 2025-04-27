@@ -4,7 +4,7 @@ import { CompactCard, FullCard, GalleryCard } from './components/Card';
 import { CatalogModel } from './components/CatalogModel';
 import { Basket } from './components/common/Basket';
 import { Modal } from './components/common/Modal';
-import { LarekApi } from './components/LarekApi';
+import { LarekApi } from './components/common/LarekApi';
 import { OrderContacts, OrderInfo } from './components/Order';
 import { OrderModel } from './components/OrderModel';
 import { Page } from './components/Page';

@@ -1,11 +1,11 @@
 import { IBasketModel, TProductInfo } from "../types";
-import { IEvents } from "./base/Events";
+import { EventEmitter } from "./base/Events";
 
 export class BasketModel implements IBasketModel {
     protected _items: TProductInfo[] = [];
-    events: IEvents;
+    events: EventEmitter;
 
-    constructor(events: IEvents) {
+    constructor(events: EventEmitter) {
         this.events = events;
     }
 

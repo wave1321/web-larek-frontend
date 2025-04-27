@@ -1,10 +1,10 @@
 import { TOrderContacts, TOrderInfo } from "../types";
-import { IEvents } from "./base/Events";
+import { EventEmitter } from "./base/Events";
 import { Form } from "./common/Form";
 
 
 export class OrderInfo extends Form<TOrderInfo> {
-    constructor (container: HTMLFormElement, events: IEvents) {
+    constructor (container: HTMLFormElement, events: EventEmitter) {
         super(container, events);
 
         (this.container.elements.namedItem('card') as HTMLButtonElement).addEventListener('click', () => {
@@ -37,7 +37,7 @@ export class OrderInfo extends Form<TOrderInfo> {
 }
 
 export class OrderContacts extends Form<TOrderContacts> {
-    constructor (container: HTMLFormElement, events: IEvents) {
+    constructor (container: HTMLFormElement, events: EventEmitter) {
         super(container, events);
     }
 

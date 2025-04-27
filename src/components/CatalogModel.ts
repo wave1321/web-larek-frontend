@@ -1,10 +1,10 @@
 import { ICatalogModel, IProduct } from "../types";
-import { IEvents } from "./base/Events";
+import { EventEmitter } from "./base/Events";
 
 export class CatalogModel implements ICatalogModel {
     items: IProduct[] = [];
 
-    constructor(protected events: IEvents) {}
+    constructor(protected events: EventEmitter) {}
 
     setItems(items: IProduct[]): void {
         this.items = items;

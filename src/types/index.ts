@@ -35,19 +35,18 @@ export interface IBasketModel {
     reset(): void; 
 };
 
+export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {
+    index?: number;
+};
+
 export interface IOrderModel {
     orderInfo: Partial<TFullOrder>;
+    formErrors: FormErrors;
     events: IEvents;
     getOrderInfo(): TFullOrder
     setOrderField(field: keyof TFullOrder, value: string): void;
-   /* checkInfoValidation(): boolean;
-    checkContactsValidation(): boolean;*/
     formErrorsChange(errors: FormErrors): boolean;
     reset(): void;
-};
-
-export type TProductInfo = Pick<IProduct, 'id' | 'title' | 'price'> & {
-    index?: number;
 };
 
 export type TOrderInfo = Pick<IOrder, 'payment' | 'address'>;
