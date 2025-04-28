@@ -9,7 +9,7 @@ export class OrderInfo extends Form<TOrderInfo> {
     constructor (container: HTMLFormElement, events: EventEmitter) {
         super(container, events);
 
-        this.orderPaymentButtons =  this.container.querySelectorAll('button') as unknown as HTMLButtonElement[];
+        this.orderPaymentButtons = this.container.querySelectorAll('button') as unknown as HTMLButtonElement[];
 
         (this.container.elements.namedItem('card') as HTMLButtonElement).addEventListener('click', () => {
             this.setButtonCheck('card');
