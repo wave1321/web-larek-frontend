@@ -64,7 +64,7 @@ interface IProduct {
     image: string;
     title: string;
     category: string;
-    price: number;
+    price: number | null;
 };
 ```
 
