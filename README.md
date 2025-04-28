@@ -196,6 +196,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Конструктор класса принимает инстант брокера событий.\
 В полях класса хранятся следующие данные:
 - `items: IProduct[]` - массив объектов карточек.\
+
 Так же класс предоставляет набор методов для взаимодействия с этими данными.
 - `setItems(items: IProduct[]): void` - записывает в items массив переданных ему объектов карточек.
 - `getProduct(id: string): IProduct` - возвращает карточку продукта из записанного ранее массива по ее id.
@@ -206,6 +207,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 В полях класса хранятся следующие данные:
 - `items: TProductInfo[]` - массив выбранных для покупки продуктов
 - `events: IEvents` - инстант класса `EventEmitter` для инициации события при изменении корзины.\
+
 Так же класс предоставляет набор методов для взаимодействия с этими данными
 - `add(item: TProductInfo): void` - добавляет продукт в корзину, формирует событие для презенетера об изменении корзины
 - `remove(id: string): void` - удаляет продукт из корзины, формирует событие для презенетера об изменении корзины
@@ -220,6 +222,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 - `orderInfo: Partial<TFullOrder>` - объект с данными заказа.
 - `formErrors: FormErrors` - объект с полем и текстом ошибки.
 - `events: IEvents` - инстант класса `EventEmitter` для инициации событий заполнения данных заказа.\
+
 Методы:
 - `getOrderInfo(): TFullOrder` - предоставляет данные из объекта orderInfo в форме TFullOrder, это нужно чтобы сформировать объект на отправку на сервер, т.к. данные
 с нескольких форм заполняются постепенно, изпользуя механику Partial.
@@ -239,8 +242,9 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса:
 - `_counter: HTMLElement` - элемент разметки отвечающий за цифру продуктов у корзины.
 - `_catalog: HTMLElement` - элемент разметки, служащий галереей продуктов на главной странице.
-- `_wrapper: HTMLElement` - общий элемент разметки главной страницы, другие видимые элементы находятся внутри.\
-- `_basket: HTMLElement` - элемент разметки кнопка корзины.
+- `_wrapper: HTMLElement` - общий элемент разметки главной страницы, другие видимые элементы находятся внутри.
+- `_basket: HTMLElement` - элемент разметки кнопка корзины.\
+
 В качестве методов имеет только сеттеры:
 - `set counter(value: number)` - записывает цифру продуктов в `_counter`.
 - `set catalog(items: HTMLElement[])` - размещает карточки внутри галереи.
@@ -254,10 +258,12 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 - `cardTitle: HTMLElement` - элемент разметки, хранящий тайтл продукта.
 - `cardPrice: HTMLElement` - элемент разметки, хранящий цену продукта
 - `cardId: string` - поле с id продукта.\
+
 В качестве методов имеет только сеттеры:
 - `set title(value: string)` - с помощью setText родителя записывает в textContent тайтла переданный из презентера тайтл.
 - `set price(value: number)` - аналогично записывает цену.
 - `set id(value: string)` - вписывает в поле переданный id.
+
 Наследники класса ниже, всего их 3.
 
 #### Класс GalleryCard
@@ -266,6 +272,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса:
 - `cardCategory: HTMLElement` - элемент разметки, хранящий название категории продукта.
 - `cardImage: HTMLImageElement` - элемент разметки, хранящий картинку продукта.\
+
 В качестве методов имеет только сеттеры:
 - `set category(value: string)` - записывает в элемент название категории, а также добавляет класс нужного цвета, используя объект настроек `cardCategoryColor`.
 - `set image(value: string)` - записывает адрес картинки в соответствующий элемент, используя метод `setImage` родителя.
@@ -279,6 +286,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса:
 - `cardText: HTMLElement` - элемент разметки, хранящий полный дескрипшн продукта.
 - `cardButton: HTMLButtonElement` - элемент разметки, хранящий кнопку `'В корзину' \ 'Удалить' \ 'Не продается!'`.\
+
 В качестве методов имеет только сеттеры:
 - `set text(value: string) ` - записывает в соотвествующий элемент дескрипшн.
 
@@ -289,6 +297,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса:
 - `cardIndex: HTMLElement` - элемент разметки, хранящий индекс продукта в корзине, сразу зочется обратить внимание.
 - `cardButton: HTMLButtonElement` - элемент разметки, хранящий кнопку удаления из корзины.\
+
 В качестве методов имеет сеттер и геттер дл индекса:
 - `set index(value: number)` - записываем индекс продукта в корзине.
 - `get index(): number` - получаем индекс продукта.
@@ -300,6 +309,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса:
 - `_closeButton: HTMLButtonElement` - элемент разметки, хранящий кнопку закрытия модального окна.
 - `_content: HTMLElement` - элемент разметки, хранящий содержимое модального окна (формы, корзину и т.д.).\
+
 Методы:
 - `set content(value: HTMLElement)` - вносит разметку в элемент контента.
 - `open(): void` - добавляет класс видимости модального окна и формирует соответствующее событие для презентера.
@@ -312,6 +322,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 - `_list: HTMLElement` - элемент разметки, хранящий лист с компактными карточками.
 - `_total: HTMLElement` - элемент разметки, хранящий общую сумму заказа.
 - `_button: HTMLButtonElement` - элемент разметки, хранящий кнопку оформления заказа.\
+
 Методы:
 - `set items(items: HTMLElement[])` - заносит элементы карточек в лист или прописывает, что корзина пуста.
 - `get items(): HTMLElement[]` - получаем список всех карточек в корзине.
@@ -325,6 +336,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса:
 - `_submit: HTMLButtonElement` - элемент разметки, хранящий кнопку сабмита.
 - `_errors: HTMLElement` - элемент разметки, хранящий текст ошибок валидации.\
+
 Методы:
 - `set valid(value: boolean)` - дизейблим кнопку сабмита, при наличии ошибок валидации.
 - `get valid(): boolean` - проверяем задизйблена ли кнопка сабмита.
@@ -340,6 +352,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Вешает обработчики клика на кнопки выбора способа оплаты.\
 Поля класса:
 - `orderPaymentButtons: HTMLButtonElement[]` - массив всех кнопок способа оплаты в данном контейнере.\
+
 Методы:
 - `set address(value: string)` - сеттер для инпута адреса (мы должны отрисовывать текст из модели, если покупка не совершена, а попап открыт повторно).
 - `setButtonCheck(value: string): void` - Подсвечвает нажатую кнопку, остальные приводит в ненажатое состояние.
@@ -354,7 +367,8 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Отвечает за отрисовку формы успешного заказа. В конструктор получает темплейт и функцию действия. Имеет формальную кнопку завершения. А также вписывает при рендере сумму заказа полученную из перезентера (туда она попадает из апи).\
 Поля класса:
 - `_close: HTMLElement` - элемент разметки, хранящий формальную кнопку завершения покупки.
-- `description: HTMLElement` - элемент разметки, хранящий, описание покупки, именно там находится сумма заказа.
+- `description: HTMLElement` - элемент разметки, хранящий, описание покупки, именно там находится сумма заказа.\
+
 Методы:
 - `set total(value: number)` - сеттер для суммы заказа внутри дескрипшена.
 
