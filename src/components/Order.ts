@@ -4,8 +4,12 @@ import { Form } from "./common/Form";
 
 
 export class OrderInfo extends Form<TOrderInfo> {
+    protected orderPaymentButtons: HTMLButtonElement[] = [];
+
     constructor (container: HTMLFormElement, events: EventEmitter) {
         super(container, events);
+
+        this.orderPaymentButtons =  this.container.querySelectorAll('button') as unknown as HTMLButtonElement[];
 
         (this.container.elements.namedItem('card') as HTMLButtonElement).addEventListener('click', () => {
             this.setButtonCheck('card');
@@ -26,11 +30,11 @@ export class OrderInfo extends Form<TOrderInfo> {
     }
 
     setButtonCheck(value: string) {
-        this.container.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
+        this.orderPaymentButtons.forEach((button) => {
             if (button.name === value) {
-                button.classList.remove('button_alt');
+                this.toggleClass(button, 'button_alt', false);
             } else {
-                button.classList.add('button_alt');
+                this.toggleClass(button, 'button_alt', true);
             }
         })
     }

@@ -1,5 +1,3 @@
-import {IEvents} from "./Events";
-
 /**
  * Базовый компонент
  */
@@ -23,6 +21,11 @@ export abstract class Component<T> {
             if (state) element.setAttribute('disabled', 'disabled');
             else element.removeAttribute('disabled');
         }
+    }
+
+    // Переключить класс
+    toggleClass(element: HTMLElement, className: string, force?: boolean) {
+        element.classList.toggle(className, force);
     }
 
     // Скрыть

@@ -149,13 +149,12 @@ events.on('order:change', (data: { field: keyof TFullOrder, value: string }) => 
 
 // Отправка заказа на сервер и переход на страницу успешной покупки
 events.on('contacts:submit', () => {
-    const readyOrders: IOrder = {
+    const readyOrder: IOrder = {
         ...orderModel.getOrderInfo(), 
         total: basketModel.getTotal(),
         items: basketModel.getIdList()
     };
-    console.log(readyOrders);
-    api.postOrder(readyOrders)
+    api.postOrder(readyOrder)
         .then(res => {
             const success = new Success(cloneTemplate(successTemplate), {
                 onClick: () => { modal.close() }

@@ -93,7 +93,7 @@ export class CompactCard extends Card<TProductInfo> {
     }
 
     set index(value: number) {
-        this.cardIndex.textContent = String(value);
+        this.setText(this.cardIndex, String(value));
     }
 
     get index(): number {
